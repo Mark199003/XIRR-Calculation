@@ -75,8 +75,9 @@ elif method == "Manually input":
                 except ValueError:
                     eg.msgbox("The date format is incorrect. Please enter the date in the format YYYY-MM-DD.",
                               title="Error")
-            cash_flow = eg.integerbox(msg=f"Enter the amount of cash flow {i+1}:", title="XIRR Calculation", default=0,
-                                      lowerbound=-1000000, upperbound=1000000)
+            cash_flow = eg.enterbox(msg=f"Enter the amount of cash flow {i+1}:", title="XIRR Calculation", default="0",
+                                    strip=True)
+            cash_flow = float(cash_flow)
             dates.append(date)
             cash_flows.append(cash_flow)
         if np.any(np.array(cash_flows) < 0) and np.any(np.array(cash_flows) > 0):
@@ -95,7 +96,13 @@ while not confirmed:
     msg += "\nAre these correct?"
     correct = eg.boolbox(msg, title="XIRR Calculation", choices=["Yes", "No"])
     if correct:
-        confirmed = True
+        # Check if there is at least one negative and one positive cash flow
+        if np.any(np.array(cash_flows) < 0) and np.any(np.array(cash_flows) > 0):
+            confirmed = True
+        else:
+            eg.msgbox(
+                "Cash flows should have at least 1 negative and 1 positive cash flow. Please enter the cash flows again.",
+                title="Error")
     else:
         valid_amendment = False
         while not valid_amendment:
@@ -111,8 +118,9 @@ while not confirmed:
                 except ValueError:
                     eg.msgbox("The date format is incorrect. Please enter the date in the format YYYY-MM-DD.",
                               title="Error")
-            cash_flow = eg.integerbox(msg=f"Enter the amended amount of cash flow {index}:", title="XIRR Calculation",
-                                      default=0, lowerbound=-1000000, upperbound=1000000)
+            cash_flow = eg.enterbox(msg=f"Enter the amended amount of cash flow {index}:", title="XIRR Calculation",
+                                      default="0", strip=True)
+            cash_flow = float(cash_flow)
             dates[index - 1] = date
             cash_flows[index - 1] = cash_flow
             if np.any(np.array(cash_flows) < 0) and np.any(np.array(cash_flows) > 0):
